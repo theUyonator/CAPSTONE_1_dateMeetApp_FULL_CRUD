@@ -1,6 +1,6 @@
 """SQLAlchemy models for the dateMeet app"""
 
-from datetime import datetime 
+import datetime 
 
 from flask_bcrypt import Bcrypt 
 from flask_sqlalchemy import SQLAlchemy
@@ -33,7 +33,6 @@ class User(db.Model):
     last_name = db.Column(
                 db.Text,
                 nullable=False,
-                unique=True
     )
 
     username = db.Column(
@@ -54,7 +53,7 @@ class User(db.Model):
     )
 
     password = db.Column(
-               db.String(30),
+               db.Text,
                nullable=False
     )
 
@@ -83,8 +82,7 @@ class User(db.Model):
 
         p = self
 
-        return f"<full_name= {p.full_name} username= {p.username} email= {p.email} 
-                 created_on= {p.created_on}>"
+        return f"<full_name= {p.full_name} username= {p.username} email= {p.email} created_on= {p.created_on}>"
 
     def full_name(self):
         """This method formats the first and last anme to form a full name"""
@@ -285,7 +283,7 @@ class History(db.Model):
     )
 
     business_name = db.Column(
-                    db.Text
+                    db.Text,
                     nullable=False
     )
 
@@ -297,6 +295,11 @@ class History(db.Model):
     yelp_business_id = db.Column(
                        db.Text,
                        nullable=False
+    )
+
+    yelp_business_url = db.Column(
+                        db.Text,
+                        nullable=True
     )
 
     user_id = db.Column(
@@ -314,6 +317,16 @@ class History(db.Model):
 
         return f"<business_name = {p.business_name} business_address = {p.business_address}>"
 
+
+
+def connect_db(app):
+    """This method connects this database to provided Flask app
+
+       This method should be called in the Flask app.
+    """
+
+    db.app = app
+    db.init_app(app)
 
 
 
