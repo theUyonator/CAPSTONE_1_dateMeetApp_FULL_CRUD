@@ -2,13 +2,14 @@
 
 import os 
 
-from flask import Flask, render_template, request, flash, redirect, session, g, abort 
+from flask import Flask, render_template, request, flash, redirect, session, g, abort, jsonify 
 from flask_bootstrap import Bootstrap
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError 
 
 from forms import UserRegisterForm, UserEditForm, UserLoginForm, UserLocationForm
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Location
+from helpers import get_geocode_location
 
 CURR_USER_KEY = "curr_user"
 
@@ -134,7 +135,7 @@ def logout():
 ##################################################################################
 # Homepage and error pages
 
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def homepage():
     """This view function takes you to the dateMeet homepage
     
@@ -145,9 +146,52 @@ def homepage():
 
     if g.user:
         form=UserLocationForm()
+
+        if form.validate_on_submit():
+
+            response = {
+                "address":{},
+                "longitude":{},
+                "latitude": {}
+            }
+            name = request.json["name"]
+            address = request.json["address"]
+
+            location = get_geocode_location(address)
+
+            return location
+
+            # raise EnvironmentError
+
+
+            # print("#########################################")
+            # print(name)
+            # print(address)
+            # print(location)
+            # print("########################################")
+
+            # curr_location = Location(
+            #     name=name,
+            #     address=location["full_address"],
+            #     long=location["longitude"],
+            #     lat=location["latitude"],
+            #     user_id = g.user.id
+            # )
+
+            # db.session.add(curr_location)
+            # db.session.commit()
+
+            # response = {
+            #     "address": location["full_address"],
+            #     "longitude": location["longitude"],
+            #     "latitude": location["latitude"]
+            # }
+
+            # return jsonify(response)
+
         return render_template('home.html',form=form)
 
-    else:
-        return render_template('home-anon.html')
+    # else:
+    #     return render_template('home-anon.html')
 
 
