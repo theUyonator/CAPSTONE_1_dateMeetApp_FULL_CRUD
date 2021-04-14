@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+ 
+<div class="container-fluid">
+  <div class="row justify-content-md-center">
+  <div class="col-md-7 col-lg-5">
+    
+    <!-- --------------------------------- -->
+    <div class="card md-4" style="width:100%;">
+        <div class="card-body">
+          <h5 class="card-title">{{location.name}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{g.user.username}}'s Current Address</h6>
+          <p class="card-text">{{location.address}}</p>
+          <a href="#" class="card-link btn btn-sm btn-primary" role="button">Edit Address</a>
+        </div>
+      </div>
+
+
+    <!-- ------------------------------- -->
+
+    <!-- ----------------------------------- -->
+
+      <form class="my-3" id="interestform" action="/dateMeet/api/yelp-business-search">
+      
+          <input type="text" name="interest" class="form-control dateMeet-brand" id="interest" aria-describedby="interesthelp" placeholder="Enter your interest">
+          <button type="submit" class="btn btn-default"><span class="fa fa-search"></span></button>
+    
+      </form> 
+
+    <!-- ----------------------------------- -->
+
+    <div>
+
+    </div>
+
+    <!-- ------------------------------------- -->
+    <div>
+
+    </div>
+
+  </div>
+  </div>
+</div>
+
+
+{% endblock %}

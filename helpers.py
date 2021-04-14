@@ -1,22 +1,85 @@
 import requests 
 from secrets import YELP_API_SECRET_KEY, GEOCODE_API_KEY
 
-BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 
 
-def get_geocode_location(address):
-    """This function is to help get the longitude and latitude of an address entered into the dateMeet app"""
+def get_lat_lng(apiKey, address):
+    """
+    This method Returns the latitude and longitude of a location using the Google Maps Geocoding API. 
+    API: https://developers.google.com/maps/documentation/geocoding/start
 
-    resp = requests.get(f"{BASE_URL}?address={address}&key={GEOCODE_API_KEY}")
+    # INPUT -------------------------------------------------------------------
+    apiKey                  [str]
+    address                 [str]
 
-    long = resp["results"][0]["geometry"]["location"]["lng"]
-    lat = resp["resulta"][0]["geometry"]["location"]["lat"]
-    full_addy = resp["results"][0]["formatted_address"]
+    # RETURN ------------------------------------------------------------------
+    location = {
+        "full_address": addy      [str],
+        "latitude": lat           [float],
+        "longitude": lng          [float]
+    }
+    """
+    url = ('https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'
+           .format(address.replace(' ','+'), apiKey))
+    try:
+        response = requests.get(url)
+        resp_json_payload = response.json()
+        lat = resp_json_payload['results'][0]['geometry']['location']['lat']
+        lng = resp_json_payload['results'][0]['geometry']['location']['lng']
+        addy = resp_json_payload['results'][0]['formatted_address']
+    except:
+        print('ERROR: {}'.format(address))
+        lat = 0
+        lng = 0
+        addy = address
 
     location = {
-        "full_address": full_addy,
-        "longitude": long,
-        "latitude": lat
+        "full_address": addy,
+        "latitude": lat,
+        "longitude": lng
     }
 
+    
     return location
+
+
+def yelp_business_search(apikey, address, term):
+    """This method makes the request to the Yelp API to retrieve businesses
+        around a specific location given the address.
+
+        API:https://www.yelp.com/developers/documentation/v3/business_search
+
+        # INPUT ---------------------------------------------------------------
+        apikey               [str]
+        address              [str]
+        term                 [str]
+
+        #RETURN ----------------------------------------------------------------
+        YELP RESPONSE SHOWN IN BUSINESS SEARCH DOCUMENTATION:
+        https://www.yelp.com/developers/documentation/v3/business_search
+
+    """
+# Define endpoint and header
+    ENDPOINT = "https://api.yelp.com/v3/businesses/search"
+    HEADERS = {'Authorization': 'bearer %s' %apikey}
+
+# Define the parameters 
+    PARAMS = {'term': term,
+              'limit': 50,
+              'radius': 40000,
+              'offset': 50,
+            #   'open_now': True,
+              'location': address}
+
+# Now we make the request to the Yelp API
+
+    response = requests.get(url=ENDPOINT, params=PARAMS, headers=HEADERS)
+
+# Convert JSON response to dictionary
+
+    business_data = response.json()
+
+    # print (business_data.keys())
+
+    return [biz['name'] for biz in business_data["businesses"]]
+        

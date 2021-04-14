@@ -110,6 +110,35 @@ body {
     box-shadow: none;
     border: 2px solid #007bff;
   }
+
+  #interest.form-control{
+    border-radius: 20px;
+    width: 100%;
+    font-size:13px;
+    padding-right:28px;
+    box-sizing:border-box;
+  }
+
+  #interest.form-control + .btn{
+    position:absolute;
+    right:25px;
+    top: 190px;
+    bottom: 2px;
+    z-index: 1;
+    padding: 0;
+    color: #66757f;
+  }
+
+  #interest.form-control + .btn:active,
+  #interestform.form-control + .btn:focus {
+    box-shadow: none;
+  }
+  
+  #interest:active,
+  #interest:focus {
+    box-shadow: none;
+    border: 2px solid #007bff;
+  }
   
   /* on "onboarding" pages (signup & login), the navbar is
      different: no search box, the logo is centered, and it has

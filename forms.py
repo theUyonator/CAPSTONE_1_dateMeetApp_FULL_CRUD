@@ -36,6 +36,8 @@ class UserLocationForm(FlaskForm):
 
     name = StringField('Save Location as', validators=[Optional()])
     address = StringField('Enter current address', validators=[DataRequired()])
+
+
      
 
     

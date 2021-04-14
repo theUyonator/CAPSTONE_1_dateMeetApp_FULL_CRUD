@@ -9,9 +9,11 @@ from sqlalchemy.exc import IntegrityError
 
 from forms import UserRegisterForm, UserEditForm, UserLoginForm, UserLocationForm
 from models import db, connect_db, User, Post, Location
-from helpers import get_geocode_location
+from helpers import get_lat_lng, yelp_business_search
+from secrets import YELP_API_SECRET_KEY, GEOCODE_API_KEY
 
 CURR_USER_KEY = "curr_user"
+CURR_LOCATION = "None"
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -23,7 +25,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgre
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "dateMeetisgr8")
 toolbar = DebugToolbarExtension(app)
 
@@ -42,16 +44,28 @@ def add_user_to_g():
     else:
         g.user = None
 
+@app.before_request
+def add_user_location():
+    """If a is logged in and has entered a location, save that location to Flask global"""
+
+    if g.user:
+        if CURR_LOCATION in session:
+            g.location = Location.query.get(session[CURR_LOCATION])
+        else:
+            g.location = None
+
 def login_user(user):
     """This function logs in an existing user"""
 
     session[CURR_USER_KEY] = user.id
 
 def logout_user():
-    """This function logs out a current user"""
+    """This function logs out a current user and removes the last entered location from the session"""
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+    if CURR_LOCATION in session:
+        del session[CURR_LOCATION]
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -129,6 +143,35 @@ def logout():
 ####################################################################################
 #General user routes:
 
+@app.route('/users')
+def list_users():
+    """This view function renders a page that lists users.
+
+    It can take a 'q' param in querystring to search by a specific username.
+    """
+
+    search = request.args.get('q')
+
+    if not search:
+        users = User.query.all()
+    else:
+        users = User.query.filter(User.username.like(f"%{search}%")).all()
+
+        return render_template('users/user_list.html', users=users)
+
+@app.route('/users/datelocations')
+def show_date_locations():
+    """This view function renders a page that shows the date locations according to the 
+       location in the global flask environment and the users entered interest.
+    """
+    if not g.user:
+        flash("Access Unauthorized, please login in!", "danger")
+        return redirect("/")
+    
+    location = Location.query.get(session[CURR_LOCATION])
+
+    return render_template('users/date_locations.html', location=location)
+
 
 
 
@@ -149,49 +192,48 @@ def homepage():
 
         if form.validate_on_submit():
 
-            response = {
-                "address":{},
-                "longitude":{},
-                "latitude": {}
-            }
-            name = request.json["name"]
-            address = request.json["address"]
+            name = form.name.data
+            address = form.address.data
+            lat_lng_addy = get_lat_lng(GEOCODE_API_KEY, address)
 
-            location = get_geocode_location(address)
+            location = Location(
+                name=name,
+                address=lat_lng_addy["full_address"],
+                long=lat_lng_addy["longitude"],
+                lat=lat_lng_addy["latitude"],
+                user_id = g.user.id
 
-            return location
+            )
 
-            # raise EnvironmentError
+            db.session.add(location)
+            db.session.commit()
 
+            session[CURR_LOCATION] = location.id
 
-            # print("#########################################")
-            # print(name)
-            # print(address)
-            # print(location)
-            # print("########################################")
-
-            # curr_location = Location(
-            #     name=name,
-            #     address=location["full_address"],
-            #     long=location["longitude"],
-            #     lat=location["latitude"],
-            #     user_id = g.user.id
-            # )
-
-            # db.session.add(curr_location)
-            # db.session.commit()
-
-            # response = {
-            #     "address": location["full_address"],
-            #     "longitude": location["longitude"],
-            #     "latitude": location["latitude"]
-            # }
-
-            # return jsonify(response)
+            return redirect('/users/datelocations')
 
         return render_template('home.html',form=form)
 
-    # else:
-    #     return render_template('home-anon.html')
+    else:
+        return render_template('home-anon.html')
+
+#######################################################################################
+#Yelp Api requets 
+
+@app.route('/dateMeet/api/yelp-business-search')
+def retrieve_businesses():
+    """This view function retrieves business information based on a existing location and 
+        entered interest.
+    """
+
+    interest = request.args['interest']
+    location = Location.query.get(session[CURR_LOCATION])
+    address = location.address
+
+    response = yelp_business_search(YELP_API_SECRET_KEY, address,interest)
+
+    return jsonify(response)
+
+
 
 
