@@ -120,9 +120,9 @@ body {
   }
 
   #interest.form-control + .btn{
-    position:absolute;
-    right:25px;
-    top: 190px;
+    position:relative;
+    right:-400px;
+    top: -50px;
     bottom: 2px;
     z-index: 1;
     padding: 0;

@@ -32,12 +32,21 @@ class UserLoginForm(FlaskForm):
     password = PasswordField('Password', validators=[Length(min=8, max=30)])
 
 class UserLocationForm(FlaskForm):
-    """This class holds the structure of a location and interest form for the user"""
+    """This class holds the structure of a location form for the user"""
+
+    name = StringField('Save Location as', validators=[Optional()])
+    address = StringField('Enter current address', validators=[DataRequired()])
+
+class EditUserLocationForm(FlaskForm):
+    """This class holds the structure of the edit location form for a user"""
 
     name = StringField('Save Location as', validators=[Optional()])
     address = StringField('Enter current address', validators=[DataRequired()])
 
 
+class UserPostAddForm(FlaskForm):
+    """This class holds the structure of the create post form for a user"""
+    
      
 
     

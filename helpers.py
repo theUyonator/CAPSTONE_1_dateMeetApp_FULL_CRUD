@@ -1,7 +1,7 @@
 import requests 
 from secrets import YELP_API_SECRET_KEY, GEOCODE_API_KEY
 
-
+business_num = 0
 
 def get_lat_lng(apiKey, address):
     """
@@ -81,5 +81,16 @@ def yelp_business_search(apikey, address, term):
 
     # print (business_data.keys())
 
-    return [biz['name'] for biz in business_data["businesses"]]
+    return {"businesses":[{
+            'name': biz['name'],
+            'yelp_url': biz['url'],
+            'phone_num': biz['phone'],
+            'rating': biz['rating'],
+            'image_url': biz['image_url'],
+            'yelp_id': biz['id'],
+            'coordinates': biz['coordinates'],
+            'location': biz['location'],
+            'is_closed':biz['is_closed']
+            }
+         for biz in business_data["businesses"]]}
         

@@ -7,7 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError 
 
-from forms import UserRegisterForm, UserEditForm, UserLoginForm, UserLocationForm
+from forms import UserRegisterForm, UserEditForm, UserLoginForm, UserLocationForm, EditUserLocationForm
 from models import db, connect_db, User, Post, Location
 from helpers import get_lat_lng, yelp_business_search
 from secrets import YELP_API_SECRET_KEY, GEOCODE_API_KEY
@@ -64,8 +64,6 @@ def logout_user():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
-    if CURR_LOCATION in session:
-        del session[CURR_LOCATION]
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -173,6 +171,39 @@ def show_date_locations():
     return render_template('users/date_locations.html', location=location)
 
 
+@app.route('/users/location/edit', methods=['GET', 'POST'])
+def edit_location():
+    """This view function is used to edit the user's location."""
+
+    if  not g.user:
+        flash("Access Unauthorized", "danger")
+        return ("/")
+
+    if not g.location:
+        flash("Please enter location", "danger")
+        return("/")
+
+    location = g.location
+    form=EditUserLocationForm(obj=location)
+
+    if form.validate_on_submit():
+
+        name = form.name.data
+        address = form.address.data
+        lat_lng_addy = get_lat_lng(GEOCODE_API_KEY, address)
+
+        location.name=name,
+        location.address=lat_lng_addy["full_address"]
+        location.long=lat_lng_addy["longitude"]
+        location.lat=lat_lng_addy["latitude"]
+        
+        db.session.commit()
+        return redirect('/users/datelocations')
+
+    return render_template('users/edit_location.html', form=form)
+        
+
+
 
 
 ##################################################################################
@@ -188,6 +219,9 @@ def homepage():
     """
 
     if g.user:
+        if g.location:
+            return redirect('/users/datelocations')
+
         form=UserLocationForm()
 
         if form.validate_on_submit():
@@ -220,13 +254,13 @@ def homepage():
 #######################################################################################
 #Yelp Api requets 
 
-@app.route('/dateMeet/api/yelp-business-search')
+@app.route('/dateMeet/api/yelp-business-search', methods=['POST'])
 def retrieve_businesses():
     """This view function retrieves business information based on a existing location and 
         entered interest.
     """
-
-    interest = request.args['interest']
+   
+    interest = request.json['interest']
     location = Location.query.get(session[CURR_LOCATION])
     address = location.address
 
