@@ -3,8 +3,8 @@
 function generate_html(business){
 
     return `
-            <div class="card my-3" style="width: 18rem;">
-                <img src="${business.image_url}" class="card-img-top" alt="yelp_business_img">
+            <div class="card my-3 col-md-4" style="width: 18rem;">
+                <img src="${business.image_url}" onerror="if (this.src != '/static/images/error.png') this.src = '/static/images/error.png' class="card-img-top" alt="yelp_business_img">
                 <div class="card-body">
                     <h5 class="card-title">${business.name}</h5>
                     <p class="card-text">${business.location.display_address.toString()}</p>

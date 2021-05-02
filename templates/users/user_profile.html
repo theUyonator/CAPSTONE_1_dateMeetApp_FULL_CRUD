@@ -1,0 +1,28 @@
+{% extends 'users/user_details.html' %}
+{% block user_details %}
+  <div class="col-sm-6">
+    <ul class="list-group mb-3" id="recommendations">
+
+      {% for recommendation in recommendations %}
+        <li class="list-group-item">
+          <a href="/recommendations/{{ recommendation.id }}" class="recommendation-link"/>
+
+          <a href="/users/{{ user.id }}">
+            <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+          </a>
+
+          <div class="recommendation-area">
+            <a href="/users/{{ user.id }}">@{{ user.username }}</a>
+            <span class="text-muted">{{ recommendation.created_on.strftime('%d %B %Y') }}</span>
+            <h4>{{ recommendation.title }} ({{ recommendation.business_rating}} star)</h4>
+            <p>{{ recommendation.content}}</p>
+            <small>{{ recommendation.business_name}}, {{ recommendation.business_address }}, {{recommendation.business_city}}, {{recommendation.business_state}}.</small>
+          </div>
+        </li>
+      
+
+      {% endfor %}
+
+    </ul>
+  </div>
+{% endblock %}

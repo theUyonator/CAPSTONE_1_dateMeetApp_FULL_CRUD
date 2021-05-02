@@ -6,7 +6,7 @@ body {
   }
   
   body.error-404 {
-    background-color: #1da1f2;
+    background-color: #000000;
   }
   
   .form-control {
@@ -121,7 +121,7 @@ body {
 
   #interest.form-control + .btn{
     position:relative;
-    right:-400px;
+    right:-1050px;
     top: -50px;
     bottom: 2px;
     z-index: 1;
@@ -224,12 +224,12 @@ body {
     margin-top: 2px;
   }
   
-  .message-area,
+  .recommendation-area,
   .timeline-image {
     display: inline-block;
   }
   
-  .message-area {
+  .recommendation-area {
     margin-left: 10px;
   }
   
@@ -292,31 +292,31 @@ body {
     padding-top: 3px;
   }
   
-  #messages {
+  /* /* #recommendations {
     position: relative;
-  }
+  } */
   
-  #messages .message-link {
+  #recommendations .recommendation-link {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1;
-  }
+  } 
   
-  #messages .list-group-item a:not(.message-link) {
+  #recommendations .list-group-item a:not(.recommendation-link) {
     position: relative;
     z-index: 2;
   }
   
-  #messages .list-group-item {
+  #recommendations .list-group-item {
     display: flex;
     align-items: flex-start;
-    padding: 7px 20px 12px;
-  }
+    padding: 5px 20px 12px;
+  } 
   
-  #messages:not(.no-hover) .list-group-item:hover {
+  #recommendations:not(.no-hover) .list-group-item:hover {
     background-color: #e6ecf0;
   }
   
@@ -511,12 +511,12 @@ body {
   
   /* ============================== Signed in Home */
   
-  /* #home-aside > .user-card {
+  #home-aside > .user-card {
     margin-top: 0;
     overflow: hidden;
   } */
   
-  /* #home-aside > .user-card .card-link {
+  #home-aside > .user-card .card-link {
     display: flex;
   }
   
@@ -544,7 +544,7 @@ body {
   
   #home-aside .stat h4 {
     text-align: left;
-  } */
+  }
   
   /* ========================== Signup/Login */
   
@@ -576,36 +576,36 @@ body {
     background-color: #62676c;
   }
   
-  #messages.no-hover .message-area {
+  #recommendations.no-hover .recommendation-area {
     width: 100%;
   }
   
-  #messages.no-hover .message-heading {
+  #recommendations.no-hover .recommendation-heading {
     display: flex;
     justify-content: space-between;
     height: 47px;
     margin-top: 3px;
   }
   
-  #messages.no-hover .message-heading .btn {
+  #recommendations.no-hover .recommendation-heading .btn {
     min-width: 105px;
   }
   
-  #messages-form {
+  #recommendations-form {
     position: absolute;
     top: 4px;
     right: 4px;
     z-index: 1;
   }
   
-  .messages-like {
+  .recommendations-like {
     position: absolute;
     top: 4px;
     right: 4px;
     z-index: 1;
   
   }
-  .single-message {
+  .single-recommendation {
     font-size: 27px;
     line-height: 32px;
     letter-spacing: 0.01em;
@@ -632,7 +632,3 @@ body {
     flex: 1;
   }
   
-  #map{
-    height:400px;
-    width:100%;
-  }

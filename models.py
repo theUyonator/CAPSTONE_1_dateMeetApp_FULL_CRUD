@@ -8,6 +8,38 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+
+class Follows(db.Model):
+    """This class holds the structure of the follows table for the dateMeet app.
+    It is the connection btw a follower <--> followed_user
+    """
+
+    __tablename__ = "follows"
+    
+    id = db.Column(
+         db.Integer,
+         primary_key=True,
+         autoincrement=True
+    )
+
+    user_being_followed_id = db.Column(
+                             db.Integer,
+                             db.ForeignKey('users.id', ondelete="cascade"),
+                             primary_key=True,
+    )
+
+    user_following_id = db.Column(
+                        db.Integer,
+                        db.ForeignKey('users.id', ondelete="cascade"),
+                        primary_key=True,
+    )
+
+# Note that the follows table has two foreign keys to the same table user, 
+# This is because each of these foreigns keys track data in two scenarios
+# While user_being_followed holds data of the other users a current user is following,
+# user_following holds information on the other users following the current / logged in user.
+
+
 class User(db.Model):
     """This class holds the structure of the user table for the dateMeet app."""
 
@@ -44,7 +76,13 @@ class User(db.Model):
     image_url = db.Column(
                 db.Text,
                 nullable=True,
-                default="/static/images/blank-profile-picture"
+                default="/static/images/blank-profile-picture.png"
+    )
+
+    header_url = db.Column(
+                db.Text,
+                nullable=True,
+                default="/static/images/blank-header-picture.jpeg"
     )
 
     bio = db.Column(
@@ -66,16 +104,29 @@ class User(db.Model):
 
     locations = db.relationship('Location', backref='users')
 
-    posts  = db.relationship('Post', backref='users')
+    recommendations  = db.relationship('Recommendation', backref='user')
+
+    followers = db.relationship(
+                "User",
+                secondary="follows",
+                primaryjoin=(Follows.user_being_followed_id == id),
+                secondaryjoin=(Follows.user_following_id == id)
+    )
+
+    following = db.relationship(
+                "User",
+                secondary="follows",
+                primaryjoin=(Follows.user_following_id == id),
+                secondaryjoin=(Follows.user_being_followed_id == id)
+    )
 
     likes = db.relationship(
-            "Post",
+            "Recommendation",
             secondary="likes"
     )
 
-    history = db.relationship('History', backref='users')
+    # history = db.relationship('History', backref='users')
 
-  
 
     def __repr__(self):
         """This method returns a clearer representation of the current user instance."""
@@ -84,6 +135,18 @@ class User(db.Model):
 
         return f"<full_name= {p.full_name} username= {p.username} email= {p.email} created_on= {p.created_on}>"
 
+    def is_following(self, other_user):
+        """This method checks if the signed in user is following `other_user`"""
+
+        user_following_list = [user for user in self.following if user == other_user]
+        return len(user_following_list) == 1
+
+    def is_followed_by(self, other_user):
+        """This method checks if the signed in user is being followed by `other_user`"""
+
+        user_followed_by_list = [user for user in self.followers if user == other_user]
+        return len(user_followed_by_list) == 1
+
     def full_name(self):
         """This method formats the first and last anme to form a full name"""
         p = self
@@ -91,7 +154,7 @@ class User(db.Model):
         return f"{p.first_name} {p.last_name}"
 
     @classmethod
-    def register(cls, first_name, last_name, email, username, password, image_url):
+    def register(cls, first_name, last_name, email, username, password, image_url, header_url):
         """This class method is used to register a new user
            
            It hashes the entered user password and adds the new user to the system.
@@ -105,7 +168,8 @@ class User(db.Model):
                 email=email,
                 username=username,
                 password=hashed_pwd,
-                image_url=image_url
+                image_url=image_url,
+                header_url=header_url
         )
 
         db.session.add(user)
@@ -165,6 +229,22 @@ class Location(db.Model):
           nullable=False
     )
 
+    city = db.Column(
+                    db.Text,
+                    nullable=False
+    )
+
+    state = db.Column(
+                       db.Text,
+                       nullable=False
+    )
+
+    entered_on = db.Column(
+                 db.DateTime, 
+                 nullable=False, 
+                 default=datetime.datetime.now
+    )
+
     user_id = db.Column(
               db.Integer,
               db.ForeignKey('users.id', ondelete='CASCADE'),
@@ -179,10 +259,10 @@ class Location(db.Model):
         return f"<address = {p.address} longitude = {p.long} latitude = {p.lat}>"
 
     
-class Post(db.Model):
+class Recommendation(db.Model):
     """This class holds the structure of the posts table in the dateMeet db."""
 
-    __tablename__ = "posts"
+    __tablename__ = "recommendations"
 
     id = db.Column(
          db.Integer,
@@ -201,24 +281,33 @@ class Post(db.Model):
               nullable=False
     )
 
-    image_url_1 = db.Column(
-                  db.Text,
-                  nullable=True
+    business_name = db.Column(
+                    db.Text,
+                    nullable=False
+    )
+    business_address = db.Column(
+                        db.Text,
+                        nullable=False
+    )
+    
+    business_city = db.Column(
+                    db.Text,
+                    nullable=False
     )
 
-    image_url_2 = db.Column(
-                  db.Text,
-                  nullable=True
+    business_state = db.Column(
+                     db.Text,
+                     nullable=False
     )
 
-    image_url_3 = db.Column(
-                  db.Text,
-                  nullable=True
+    business_country = db.Column(
+                       db.Text,
+                       nullable=False
     )
 
-    image_url_4 = db.Column(
-                  db.Text,
-                  nullable=True
+    business_rating = db.Column(
+                      db.Integer,
+                      nullable=False
     )
 
     created_on = db.Column(
@@ -241,6 +330,7 @@ class Post(db.Model):
 
         return f"<title = {p.title} created_on = {p.created_on}>"
 
+
 class Likes(db.Model):
     """This class holds the structure of the likes table in the dateMeet db."""
 
@@ -258,9 +348,9 @@ class Likes(db.Model):
               nullable=False
     )
 
-    post_id = db.Column(
+    recommendation_id = db.Column(
               db.Integer,
-              db.ForeignKey('posts.id', ondelete='CASCADE')
+              db.ForeignKey('recommendations.id', ondelete='CASCADE')
     )
 
     def __repr__(self):
@@ -268,65 +358,64 @@ class Likes(db.Model):
 
         p = self
 
-        return f"<user_id = {p.user_id} post_id={p.post_id}>"
-
-
-class History(db.Model):
-    """This class holds the structure of the history table in the dateMeet db."""
-
-    __tablename__ = "history"
-
-    id = db.Column(
-         db.Integer,
-         primary_key=True,
-         autoincrement=True
-    )
-
-    business_name = db.Column(
-                    db.Text,
-                    nullable=False
-    )
-
-    business_address = db.Column(
-                       db.Text,
-                       nullable=False
-    )
-
-    yelp_business_id = db.Column(
-                       db.Text,
-                       nullable=False
-    )
-
-    yelp_business_url = db.Column(
-                        db.Text,
-                        nullable=True
-    )
-
-    user_id = db.Column(
-              db.Integer,
-              db.ForeignKey('users.id', ondelete='CASCADE'),
-              nullable=False
-    )
-
-
-
-    def __repr__(self):
-        """This method returns a clearer representation of the current post instance."""
-
-        p = self
-
-        return f"<business_name = {p.business_name} business_address = {p.business_address}>"
-
+        return f"<user_id = {p.user_id} recommendation_id={p.recommendation_id}>"
 
 
 def connect_db(app):
     """This method connects this database to provided Flask app
 
        This method should be called in the Flask app.
-    """
+       """
 
     db.app = app
     db.init_app(app)
+
+
+# class History(db.Model):
+#     """This class holds the structure of the history table in the dateMeet db."""
+
+#     __tablename__ = "history"
+
+#     id = db.Column(
+#          db.Integer,
+#          primary_key=True,
+#          autoincrement=True
+#     )
+
+#     business_name = db.Column(
+#                     db.Text,
+#                     nullable=False
+#     )
+
+#     business_address = db.Column(
+#                        db.Text,
+#                        nullable=False
+#     )
+
+#     yelp_business_id = db.Column(
+#                        db.Text,
+#                        nullable=False
+#     )
+
+#     yelp_business_url = db.Column(
+#                         db.Text,
+#                         nullable=True
+#     )
+
+#     user_id = db.Column(
+#               db.Integer,
+#               db.ForeignKey('users.id', ondelete='CASCADE'),
+#               nullable=False
+#     )
+
+
+
+#     def __repr__(self):
+#         """This method returns a clearer representation of the current post instance."""
+
+#         p = self
+
+#         return f"<business_name = {p.business_name} business_address = {p.business_address}>"
 
 
 
