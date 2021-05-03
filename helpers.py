@@ -81,7 +81,7 @@ def yelp_business_search(apikey, address, term):
               'limit': 50,
               'radius': 40000,
               'offset': 50,
-            #   'open_now': True,
+              'sort_by': "distance",
               'location': address}
 
 # Now we make the request to the Yelp API

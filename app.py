@@ -241,6 +241,62 @@ def edit_location():
 
     return render_template('users/edit_location.html', form=form)
 
+
+@app.route('/users/<int:user_id>/following')
+def show_following(user_id):
+    """Show list of users this user is following."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('users/following.html', user=user)
+
+
+@app.route('/users/<int:user_id>/followers')
+def show_followers(user_id):
+    """Show list of followers of this user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('users/followers.html', user=user)
+
+
+@app.route('/users/follow/<int:follow_id>', methods=['POST'])
+def add_follow(follow_id):
+    """This view function allows the logged in user to follow any user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    followed_user = User.query.get_or_404(follow_id)
+    g.user.following.append(followed_user)
+    db.session.commit()
+
+    return redirect(f"/users/{g.user.id}/following")
+
+
+@app.route('/users/unfollow/<int:follow_id>', methods=['POST'])
+def unfollow(follow_id):
+    """This view function allows logged-in-user to unfollow this user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    followed_user = User.query.get(follow_id)
+    g.user.following.remove(followed_user)
+    db.session.commit()
+
+    return redirect(f"/users/{g.user.id}/following")
+
+
+
 @app.route('/users/edit', methods=['GET', 'POST'])
 def edit_user_details():
     """This view function allows a user to edit their information."""
