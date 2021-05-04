@@ -1,0 +1,34 @@
+{% extends 'users/user_details.html' %}
+{% block user_details %}
+  <div class="col-sm-9">
+    <div class="row">
+          <ul class="list-group" id="recommendations">
+            {% for liked_recommendation in user.likes %} 
+            <li class="list-group-item">
+                <a href="/recommendations/{{ liked_recommendation.id  }}" class="recommendation-link"/>
+                <a href="/users/{{ liked_recommendation.user.id }}">
+                  <img src="{{ liked_recommendation.user.image_url }}" alt="" class="timeline-image">
+                </a>
+                <div class="recommendation-area">
+                    <span class="text-muted">{{ liked_recommendation.created_on.strftime('%d %B %Y') }}</span>
+                    <h4>{{ liked_recommendation.title }} ({{ liked_recommendation.business_rating}} star)</h4>
+                    <p>{{ liked_recommendation.content}}</p>
+                    <small>{{ liked_recommendation.business_name}}, {{ liked_recommendation.business_address }}, {{ liked_recommendation.business_city }}, {{ liked_recommendation.business_state }}.</small>
+                </div>
+                  
+                {% if g.user.id == user.id %}
+                    <form method="POST"
+                          action="/recommendations/{{ liked_recommendation.id }}/like"
+                          class="recommendations-like">
+                        <button class="btn btn-sm-primary">
+                            <i class="fa fa-thumbs-up"></i> 
+                        </button>
+                    </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+          
+        </ul>
+    </div>
+  </div>
+{% endblock %}

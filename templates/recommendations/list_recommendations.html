@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-sm-12">
+      <ul class="list-group" id="messages">
+        {% for recommendation in recommendations %}
+        {% if g.location.city == recommendation.business_city and g.location.state == recommendation.business_state %}
+          <li class="list-group-item">
+            <a href="/recommendations/{{ recommendation.id  }}" class="recommendation-link"/>
+            <a href="/users/{{ recommendation.user.id }}">
+              <img src="{{ recommendation.user.image_url }}" alt="" class="timeline-image">
+            </a>
+            <div class="recommendation-area">
+                <span class="text-muted">{{ recommendation.created_on.strftime('%d %B %Y') }}</span>
+                <h4>{{ recommendation.title }} ({{ recommendation.business_rating}} star)</h4>
+                <p>{{ recommendation.content}}</p>
+                <small>{{ recommendation.business_name}}, {{ recommendation.business_address }}, {{recommendation.business_city}}, {{recommendation.business_state}}.</small>
+            </div>
+            <form method="POST" action="/recommendations/{{ recommendation.id }}/like" id="recommendations-form">
+              <button class="
+                btn 
+                btn-sm 
+                {{'btn-primary' if recommendation.id in likes else 'btn-secondary'}}"
+              >
+                <i class="fa fa-thumbs-up"></i> 
+              </button>
+            </form>
+          </li>
+        {% else %}
+          <h4>There are no recommendations in your area right now!</h4>
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+
+{% endblock %}

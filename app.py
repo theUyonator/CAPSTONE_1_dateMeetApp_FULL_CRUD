@@ -265,6 +265,17 @@ def show_followers(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('users/followers.html', user=user)
 
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Show list of recommendations liked by the logged-in user"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('users/likes.html', user=user, likes=user.likes)
+
 
 @app.route('/users/follow/<int:follow_id>', methods=['POST'])
 def add_follow(follow_id):
@@ -351,6 +362,24 @@ def delete_user():
 ##############################################################################
 # Recommendations routes:
 
+@app.route('/recommendations/list')
+def list_recommendations():
+    """This view function renders a template where recommendations for a particular 
+        city can be viewed by users in that city.
+    """
+    if not g.user:
+        flash("Access unauthorized, please log in.", "danger")
+        return redirect("/")
+
+    
+    recommendations = (Recommendation
+                       .query
+                       .order_by(Recommendation.created_on.desc())
+                       .limit(100)
+                       .all())
+
+    return render_template('recommendations/list_recommendations.html', recommendations=recommendations)
+
 @app.route('/recommendations/new', methods=["GET", "POST"])
 def add_recommendation():
     """This view function renders the form to add a new recommendation
@@ -407,6 +436,36 @@ def delete_recommendation(recommendation_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+##################################################################################
+#Likes route
+
+@app.route('/recommendations/<int:recommendation_id>/like', methods=['POST'])
+def like_and_unlike(recommendation_id):
+    """This view function allows a user to like and unlike a particular recommendation"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    liked_recommendation = Recommendation.query.get_or_404(recommendation_id)
+    # This conditional makes it impossible for a logged-in user to like their own recommendations
+    if liked_recommendation.user_id == g.user.id:
+        return abort(403)
+
+    user_likes = g.user.likes
+    # This conditional removes the like from the user_likes if it already exist in user_likes hence 
+    #providing us with the unlike feature.
+    if liked_recommendation in user_likes:
+        g.user.likes = [like for like in user_likes if like != liked_recommendation]
+
+    else:
+        g.user.likes.append(liked_recommendation)
+
+    db.session.commit()
+
+    return redirect("/recommendations/list")
+
 
 
 
