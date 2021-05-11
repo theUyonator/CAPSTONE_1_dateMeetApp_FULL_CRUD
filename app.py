@@ -371,9 +371,14 @@ def list_recommendations():
         flash("Access unauthorized, please log in.", "danger")
         return redirect("/")
 
+    if not g.location:
+        flash("Location does not exist, please enter your location!", "danger")
+        return redirect("/")
+
     
     recommendations = (Recommendation
                        .query
+                       .filter((g.location.city == Recommendation.business_city) & (g.location.state == Recommendation.business_state))
                        .order_by(Recommendation.created_on.desc())
                        .limit(100)
                        .all())

@@ -76,13 +76,13 @@ class User(db.Model):
     image_url = db.Column(
                 db.Text,
                 nullable=True,
-                default="/static/images/blank-profile-picture.png"
+                default="/static/Images/blank-profile-picture.png"
     )
 
     header_url = db.Column(
                 db.Text,
                 nullable=True,
-                default="/static/images/blank-header-picture.jpeg"
+                default="/static/Images/blank-header-picture.jpeg"
     )
 
     bio = db.Column(
@@ -210,13 +210,12 @@ class Location(db.Model):
 
     name = db.Column(
            db.Text,
-           nullable=True
+           nullable=False
     )
 
     address = db.Column(
               db.Text,
-              nullable=False,
-              unique=True
+              nullable=False
     )
 
     long = db.Column(

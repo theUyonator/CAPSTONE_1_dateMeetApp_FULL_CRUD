@@ -25,6 +25,9 @@ body {
       font-family: Pacifico;
       font-display: Swap;
   }
+  a{
+    text-decoration: none;
+  }
   
   /* ======================= Nav */
   
@@ -42,6 +45,7 @@ body {
     color: #fff;
     font-size: 13px;
     font-weight: bold;
+    text-decoration: none;
   }
   
   .navbar a:hover {
@@ -218,9 +222,9 @@ body {
   }
   
   .timeline-image {
-    border-radius: 48px;
-    height: 48px;
-    width: 48px;
+    border-radius: 50px;
+    height: 50px;
+    width: 50px;
     margin-top: 2px;
   }
   
@@ -233,7 +237,7 @@ body {
     margin-left: 10px;
   }
   
-  #warbler-hero {
+  #dateMeet-hero {
     height: 360px;
     margin-top: -16px;
     opacity: 0.7;
@@ -290,6 +294,7 @@ body {
     font-size: 18px;
     font-weight: bold;
     padding-top: 3px;
+    text-decoration: none;
   }
   
   /* /* #recommendations {
