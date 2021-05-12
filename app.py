@@ -154,7 +154,7 @@ def list_users():
 
     if not g.user:
         flash("Access Unauthorized, please login in!", "danger")
-        return redirect("/")
+        return redirect("/login")
 
     search = request.args.get('q')
 
@@ -163,7 +163,7 @@ def list_users():
     else:
         users = User.query.filter(User.username.like(f"%{search}%")).all()
 
-        return render_template('users/user_list.html', users=users)
+    return render_template('users/user_list.html', users=users)
 
 @app.route('/users/datelocations')
 def show_date_locations():
