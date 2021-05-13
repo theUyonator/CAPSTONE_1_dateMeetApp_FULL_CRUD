@@ -2,6 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, BooleanField, IntegerField
+# from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import DataRequired, Email, Length, Optional
 from wtforms.widgets import html5
 
@@ -15,6 +16,9 @@ class UserRegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[Length(min=8, max=30)])
     image_url = StringField('(Optional) Image Url', validators=[Optional()])
     header_url = StringField('(Optional) Header Url', validators=[Optional()])
+    # image_url = FileField('Profile Picture', validators=[Optional(),FileAllowed(['jpeg', 'jpg', 'png'], 'Images only!')])
+    # header_url = FileField('Header Picture', validators=[Optional(),FileAllowed(['jpeg', 'jpg', 'png'], 'Images only!')])
+
 
 class UserEditForm(FlaskForm):
     """Form for editing user information."""
@@ -26,6 +30,8 @@ class UserEditForm(FlaskForm):
     password = PasswordField('Password', validators=[Length(min=8, max=30)])
     image_url = StringField('(Optional) Image Url', validators=[Optional()])
     header_url = StringField('(Optional) Header Url', validators=[Optional()])
+    # image_url = FileField('Profile Picture', validators=[Optional(),FileAllowed(['jpeg', 'jpg', 'png'], 'Images only!')])
+    # header_url = FileField('Header Picture', validators=[Optional(),FileAllowed(['jpeg', 'jpg', 'png'], 'Images only!')])
     bio = TextAreaField('(Optional) Tell dateMeet users about yourself', validators=[Optional()])
 
 class UserLoginForm(FlaskForm):
