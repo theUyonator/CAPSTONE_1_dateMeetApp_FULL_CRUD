@@ -192,7 +192,7 @@ class UserModelTestCase(TestCase):
 
         u = User.authenticate(self.user1.username, "passWord4u1")
         self.assertIsNotNone(u)
-        self.assertEquals(u.id, self.u1d1)
+        self.assertEqual(u.id, self.u1d1)
 
     def test_invalid_username(self):
         """This test method test the authentication method with an invalid username"""
