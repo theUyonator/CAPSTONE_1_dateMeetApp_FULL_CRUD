@@ -1,5 +1,7 @@
 # CAPSTONE_1_dateMeetApp_FULL_CRUD
-dateMeet is a full CRUD app that allows users identify exciting businesses in their location matching their entered interest. This app makes use of the Google Geocode API to collect and verify acurate user location and uses the Yelp API to retrieve businesses matching the users interest and in a 10km radius.
+dateMeet is a full CRUD app that allows users identify exciting businesses in their location matching their entered interest. This app makes use of the Google Geocode API to collect and verify acurate user location and uses the Yelp API to retrieve businesses matching the users interest and in a 10km radius.  
+
+![](Static/Images/dateMeet-logo.png).   
 
 # Documentation
 
