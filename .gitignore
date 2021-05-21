@@ -1,4 +1,2 @@
 __pycache__
 venv/
-secrets.py
-static/javascript/secret.js
