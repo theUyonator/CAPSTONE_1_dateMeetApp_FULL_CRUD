@@ -63,9 +63,11 @@
     <h4 id="sidebar-username">@{{ user.username }}</h4>
     <p>{{user.bio}}</p>
     {% if g.user.id == user.id %}
-    <p class="user-location"><span class="fa fa-map-marker mr-1"></span>{{g.location.address}}</p>
+    <p class="user-location"><span class="fa fa-map-marker mr-1"></span> {{g.location.address}}</p>
+    {% elif not user.locations %}
+    <p class="user-location"><span class="fa fa-map-marker mr-1"></span> None</p>
     {% else %}
-    <p class="user-location"><span class="fa fa-map-marker mr-1"></span>{{user.locations[ user.locations | length - 1].city}}, {{user.locations[ user.locations | length - 1].state}}</p>
+    <p class="user-location"><span class="fa fa-map-marker mr-1"></span> {{user.locations[last].city}}, {{user.locations[last].state}}</p>
     {% endif %}
 
   </div>

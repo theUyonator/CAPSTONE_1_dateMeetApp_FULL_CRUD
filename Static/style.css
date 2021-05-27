@@ -150,7 +150,7 @@ body {
    */
   
   .onboarding > .navbar {
-    background-image: url("/static/images/nav-bg.png");
+    background-image: url("/static/nav-bg.png");
     background-size: 100% 100%;
   }
   
@@ -438,7 +438,7 @@ body {
     width: 100vw;
     left: 0;
     z-index: -1;
-    background-image: url("/static/images/signed-out-home.jpg");
+    background-image: url("/static/signed-out-home.jpg");
     background-size: cover;
     background-position: center center;
     color: #fff;

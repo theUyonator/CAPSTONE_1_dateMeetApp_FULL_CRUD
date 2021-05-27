@@ -201,7 +201,9 @@ def show_user(user_id):
                        .all())
 
     likes = [recommendation.id for recommendation in user.likes]
-    return render_template('users/user_profile.html', user=user, recommendations=recommendations, likes=likes)
+   
+    last = -1
+    return render_template('users/user_profile.html', user=user, recommendations=recommendations, likes=likes, last=last)
 
 
 @app.route('/users/location/edit', methods=['GET', 'POST'])

@@ -94,6 +94,10 @@ def yelp_business_search(apikey, address, term):
 
     # print (business_data.keys())
 
+    # for b in business_data["businessess"]:
+    #     if not b['image_url']:
+    #         b['image_url'] = "/static/error.png"
+
     return {"businesses":[{
             'name': biz['name'],
             'yelp_url': biz['url'],
