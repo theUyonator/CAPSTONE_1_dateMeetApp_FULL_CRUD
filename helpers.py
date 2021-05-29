@@ -94,9 +94,23 @@ def yelp_business_search(apikey, address, term):
 
     # print (business_data.keys())
 
-    # for b in business_data["businessess"]:
-    #     if not b['image_url']:
-    #         b['image_url'] = "/static/error.png"
+  
+    # business_info = {"businesses":[{
+    #                         'name': biz['name'],
+    #                         'yelp_url': biz['url'],
+    #                         'phone_num': biz['phone'],
+    #                         'rating': biz['rating'],
+    #                         'image_url': biz['image_url'],
+    #                         'yelp_id': biz['id'],
+    #                         'coordinates': biz['coordinates'],
+    #                         'location': biz['location'],
+    #                         'is_closed':biz['is_closed']
+    #                         }
+    #                     for biz in business_data["businesses"]]}
+
+    # for bus in business_info["business"]:
+    #     if not bus['image_url']:
+    #         bus.setdefault('image_url', default="/static/error.png")
 
     return {"businesses":[{
             'name': biz['name'],
@@ -110,6 +124,8 @@ def yelp_business_search(apikey, address, term):
             'is_closed':biz['is_closed']
             }
          for biz in business_data["businesses"]]}
+
+    # return business_info
 
 
 # def yelp_business_match(apikey, name, address):
