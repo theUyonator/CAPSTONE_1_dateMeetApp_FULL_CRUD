@@ -2,7 +2,7 @@
 
 import os 
 
-from flask import Flask, render_template, request, flash, redirect, session, g, abort, jsonify 
+from flask import Flask, send_from_directory, render_template, request, flash, redirect, session, g, abort, jsonify 
 from flask_bootstrap import Bootstrap
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError 
