@@ -15,7 +15,7 @@ from secrets import YELP_API_SECRET_KEY, GEOCODE_API_KEY
 CURR_USER_KEY = "curr_user"
 CURR_LOCATION = "None"
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__, static_url_path='', static_folder='static')
 Bootstrap(app)
 
 # For production and testing we need to get the DB_URI from environ variable 
